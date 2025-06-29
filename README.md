@@ -22,6 +22,12 @@ The **Bacterial Drug Resistance Predictor** is a machine learning pipeline built
 
 * **Data Handling:** Utilizes `BioPython` for sequence parsing and `scikit-learn` for multi-label binarization of antibiotic classes.
 
+## System Architecture
+- FastAPI backend with async processing
+- Multi-label classification pipeline
+- Real-time model training with progress tracking
+- RESTful API design with proper error handling
+
 ## Setup and Installation
 
 ### Prerequisites
