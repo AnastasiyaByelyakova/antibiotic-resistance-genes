@@ -124,10 +124,14 @@ class ResistancePredictor:
         input_dim = X_train.shape[1]
         n_classes = y_train.shape[1]
 
-        if self.model is None or (self.model.output_shape and self.model.output_shape[1] != n_classes):
-             self.model = self.build_model(input_dim, n_classes)
+        # Rebuild model if it's not initialized, or if input_dim or n_classes changed
+        if (self.model is None or
+            (self.model.input_shape and self.model.input_shape[1] != input_dim) or # Check input_dim
+            (self.model.output_shape and self.model.output_shape[1] != n_classes)):
+            logger.info(f"Building/rebuilding model due to change in input_dim ({self.model.input_shape[1] if self.model and self.model.input_shape else 'None'} -> {input_dim}) or n_classes.")
+            self.model = self.build_model(input_dim, n_classes)
         else:
-            logger.info("Using existing model for training/retraining.")
+            logger.info("Using existing model for training/retraining without rebuilding.")
 
         callbacks = [
             EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True),

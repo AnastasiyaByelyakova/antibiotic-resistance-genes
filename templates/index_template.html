@@ -33,421 +33,329 @@
         }
         .card {
             border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
             background-color: #ffffff;
-            border: none;
-        }
-        .card-header {
-            background-color: #e2e8f0;
-            border-bottom: 1px solid #cbd5e0;
-            border-top-left-radius: 12px;
-            border-top-right-radius: 12px;
-            font-weight: bold;
-            color: #2d3748;
-            padding: 15px 20px;
-        }
-        .upload-area {
-            border: 2px dashed #a0aec0; /* Lighter dashed border */
-            border-radius: 12px;
-            padding: 50px;
-            text-align: center;
-            background-color: #f7fafc;
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-        .upload-area:hover {
-            background-color: #ebf4ff; /* Light blue on hover */
-            border-color: #667eea;
-        }
-        .upload-area.dragover {
-            background-color: #e0f2fe;
-            border-color: #4299e1;
         }
         .btn-primary {
-            background-color: #4299e1;
-            border-color: #4299e1;
-            border-radius: 8px;
-            padding: 10px 25px;
-            font-weight: bold;
+            background-color: #667eea;
+            border-color: #667eea;
             transition: background-color 0.3s, border-color 0.3s;
         }
         .btn-primary:hover {
-            background-color: #3182ce;
-            border-color: #3182ce;
+            background-color: #5a67d8;
+            border-color: #5a67d8;
         }
-        .progress-container {
-            width: 100%;
-            background-color: #e0e0e0;
+        .form-control:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.25rem rgba(102, 110, 234, 0.25);
+        }
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 2s linear infinite;
+            margin: 0 auto 15px auto;
+            display: none; /* Hidden by default */
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .result-section {
+            margin-top: 30px;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 20px;
+        }
+        .result-item {
+            background-color: #f0f4f8;
+            border-left: 5px solid #667eea;
             border-radius: 8px;
-            overflow: hidden;
-            margin-top: 15px;
-            height: 20px;
-        }
-        .progress-bar-animated {
-            height: 100%;
-            width: 0%;
-            background-color: #667eea;
-            text-align: center;
-            color: white;
-            border-radius: 8px;
-            animation: progress-animation 2s infinite linear;
-        }
-        @keyframes progress-animation {
-            0% { width: 0%; }
-            100% { width: 100%; }
-        }
-        .result-card {
-            animation: slideIn 0.5s ease-out;
-        }
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .resistance-badge {
-            display: inline-block;
-            margin: 5px 3px;
-            padding: 8px 12px;
-            border-radius: 20px;
-            font-size: 0.9em;
-            font-weight: bold;
-            background-color: #e53e3e; /* Default for resistance */
-            color: white;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        .resistance-badge.resistant {
-            background-color: #e53e3e; /* Red */
-        }
-        .resistance-badge.susceptible {
-            background-color: #48bb78; /* Green */
-        }
-        .alert-container {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1050;
-        }
-        .alert {
-            opacity: 0;
-            transition: opacity 0.5s ease-in-out;
-        }
-        .alert.show {
-            opacity: 1;
-        }
-        .probability-bar-container {
+            padding: 15px;
             margin-bottom: 10px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
         }
-        .probability-bar {
-            width: 100%;
-            background-color: #e9ecef;
-            border-radius: 5px;
-            height: 20px;
-            overflow: hidden;
-            margin-top: 5px;
+        .result-item strong {
+            color: #2b3044;
         }
-        .probability-fill {
-            height: 100%;
-            background-color: #4299e1; /* Default blue for probabilities */
-            border-radius: 5px;
+        .result-item span {
+            color: #4a5568;
         }
-        .probability-fill.resistant-bar {
-            background-color: #e53e3e; /* Red for high resistance */
-        }
-        .probability-fill.susceptible-bar {
-            background-color: #48bb78; /* Green for high susceptibility */
-        }
-        .probability-fill.intermediate-bar {
-            background-color: #f6ad55; /* Orange for intermediate */
-        }
-        .result-section-title {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #2d3748;
+        .alert-custom {
             margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            display: none; /* Hidden by default */
+        }
+        .alert-info {
+            background-color: #e0f2f7;
+            color: #007bff;
+            border: 1px solid #007bff;
+        }
+        .alert-warning {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeeba;
+        }
+        .alert-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        /* Custom modal for alerts */
+        .custom-modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1000; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+            justify-content: center;
+            align-items: center;
+        }
+        .custom-modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 500px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            text-align: center;
+            position: relative;
+        }
+        .custom-modal-header {
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
             margin-bottom: 15px;
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+        .custom-modal-body {
+            padding: 10px 0;
+            font-size: 1rem;
+        }
+        .custom-modal-footer {
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+            margin-top: 15px;
+        }
+        .custom-modal-footer button {
+            padding: 8px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        .custom-modal-footer .btn-primary {
+            background-color: #007bff;
+            color: white;
+            border: none;
         }
     </style>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark">
-        <div class="container">
+        <div class="container-fluid">
             <a class="navbar-brand" href="/">
-                <i class="fas fa-microscope me-2"></i>BDR Predictor
+                <i class="fas fa-microscope me-2"></i> Bacterial Resistance Predictor
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="/"><i class="fas fa-flask me-1"></i>Predict</a>
+                        <a class="nav-link active" href="/"><i class="fas fa-flask me-1"></i> Predict</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/dashboard"><i class="fas fa-tachometer-alt me-1"></i>Dashboard</a>
+                        <a class="nav-link" href="/dashboard"><i class="fas fa-chart-line me-1"></i> Dashboard</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-user-circle me-1"></i> <span id="usernameDisplay">User</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="/logout"><i class="fas fa-sign-out-alt me-1"></i> Logout</a></li>
+                        </ul>
                     </li>
                 </ul>
             </div>
         </div>
     </nav>
 
-    <div class="container py-5">
-        <h1 class="text-center mb-5">Predict Bacterial Drug Resistance</h1>
+    <div class="container">
+        <h1 class="mb-4 text-center">Predict Bacterial Drug Resistance</h1>
 
-        <!-- Alert Container -->
-        <div id="alertContainer" class="alert-container"></div>
-
-        <div class="card mb-4">
-            <div class="card-header">Upload FASTA for Prediction</div>
-            <div class="card-body">
-                <form id="uploadForm" enctype="multipart/form-data">
-                    <div class="mb-4">
-                        <label for="fastaFile" class="form-label visually-hidden">Choose FASTA File</label>
-                        <div class="upload-area" id="uploadArea">
-                            <i class="fas fa-cloud-upload-alt fa-3x text-primary mb-3"></i>
-                            <p class="text-primary">Drag & Drop your FASTA file here or Click to Upload</p>
-                            <input type="file" id="fastaFile" name="file" accept=".fasta,.fna,.fa" class="d-none">
-                        </div>
-                        <small class="form-text text-muted">Accepted formats: .fasta, .fna, .fa</small>
-                    </div>
-                    <button type="submit" class="btn btn-primary w-100" id="predictBtn">
-                        <i class="fas fa-magic me-2"></i>Predict Resistance
-                    </button>
-                    <div class="progress-container mt-3" id="predictProgress" style="display:none;">
-                        <div class="progress-bar-animated" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">Predicting...</div>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-        <!-- Prediction Results Section -->
-        <div id="resultsSection" class="card result-card" style="display:none;">
-            <div class="card-header">Prediction Results</div>
-            <div class="card-body">
-                <button id="downloadResults" class="btn btn-secondary btn-sm float-end mb-3">
-                    <i class="fas fa-download me-1"></i> Download Raw JSON
-                </button>
-                <div class="clearfix"></div>
-                
-                <div id="predictionResultsContent">
-                    <!-- Results for each sequence will be dynamically inserted here -->
+        <div id="alertModal" class="custom-modal">
+            <div class="custom-modal-content">
+                <div class="custom-modal-header" id="alertModalTitle"></div>
+                <div class="custom-modal-body" id="alertModalMessage"></div>
+                <div class="custom-modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="hideAlert()">OK</button>
                 </div>
             </div>
         </div>
 
-        <!-- Error Message Section -->
-        <div id="errorSection" class="alert alert-danger mt-4" style="display:none;">
-            <h4 class="alert-heading"><i class="fas fa-exclamation-triangle me-2"></i>Error!</h4>
-            <p id="errorMessage"></p>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <div class="card p-4">
+            <h4 class="mb-3 text-center">Upload FASTA File for Prediction</h4>
+            <div class="mb-3">
+                <label for="fastaFile" class="form-label">Select FASTA File (.fasta, .fa, .fna)</label>
+                <input class="form-control" type="file" id="fastaFile" accept=".fasta,.fa,.fna">
+            </div>
+            <button class="btn btn-primary w-100" id="predictButton">
+                Predict Resistance
+            </button>
+
+            <div class="loader mt-3" id="loader"></div>
+
+            <div id="errorMessage" class="alert-custom alert-danger text-center" role="alert" style="display: none;">
+                <!-- Error message will be displayed here -->
+            </div>
+
+            <div class="result-section" id="predictionResultSection" style="display: none;">
+                <h4 class="mb-3">Prediction Results for: <span id="predictedFilename" class="text-primary"></span></h4>
+                <div id="predictionResults">
+                    <!-- Prediction results will be dynamically inserted here -->
+                </div>
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                    <button class="btn btn-success" id="downloadResults">
+                        <i class="fas fa-download me-2"></i> Download Results (JSON)
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Utility function to show alerts
-        function showAlert(message, type) {
-            const alertContainer = document.getElementById('alertContainer');
-            const alertDiv = document.createElement('div');
-            alertDiv.className = `alert alert-${type} alert-dismissible fade`;
-            alertDiv.setAttribute('role', 'alert');
-            alertDiv.innerHTML = `
-                ${message}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            `;
-            alertContainer.appendChild(alertDiv);
-            setTimeout(() => alertDiv.classList.add('show'), 10); // Fade in
-            setTimeout(() => {
-                alertDiv.classList.remove('show');
-                alertDiv.addEventListener('transitionend', () => alertDiv.remove());
-            }, 5000); // Remove after 5 seconds
+        // Custom Alert/Modal Functions (copied from dashboard for consistency)
+        const alertModal = document.getElementById('alertModal');
+        const alertModalTitle = document.getElementById('alertModalTitle');
+        const alertModalMessage = document.getElementById('alertModalMessage');
+
+        function showAlert(title, message, type = 'info') {
+            alertModalTitle.textContent = title;
+            alertModalMessage.innerHTML = message; // Use innerHTML to allow pre-formatted text
+
+            // Remove previous type classes
+            alertModalMessage.classList.remove('alert-info', 'alert-warning', 'alert-danger');
+            // Add new type class
+            alertModalMessage.classList.add(`alert-${type}`);
+
+            alertModal.style.display = 'flex'; // Use flex to center
         }
 
-        document.addEventListener('DOMContentLoaded', function() {
-            const uploadArea = document.getElementById('uploadArea');
+        function hideAlert() {
+            alertModal.style.display = 'none';
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set username in navbar if available (passed from Jinja context)
+            const usernameDisplay = document.getElementById('usernameDisplay');
+            if (usernameDisplay && '{{ username }}' !== 'None' && '{{ username }}' !== '') {
+                usernameDisplay.textContent = '{{ username }}';
+            } else {
+                usernameDisplay.textContent = 'Guest'; // Default if not logged in
+            }
+
+            const predictButton = document.getElementById('predictButton');
             const fastaFile = document.getElementById('fastaFile');
-            const uploadForm = document.getElementById('uploadForm');
-            const predictBtn = document.getElementById('predictBtn');
-            const predictProgress = document.getElementById('predictProgress');
-            const resultsSection = document.getElementById('resultsSection');
-            const errorSection = document.getElementById('errorSection');
-            const predictionResultsContent = document.getElementById('predictionResultsContent');
+            const loader = document.getElementById('loader');
+            const predictionResultSection = document.getElementById('predictionResultSection');
+            const predictionResultsDiv = document.getElementById('predictionResults');
+            const errorMessageSection = document.getElementById('errorMessage');
+            const predictedFilenameSpan = document.getElementById('predictedFilename');
 
-            // Drag and Drop functionality
-            uploadArea.addEventListener('click', () => fastaFile.click());
-            
-            uploadArea.addEventListener('dragover', (e) => {
-                e.preventDefault();
-                uploadArea.classList.add('dragover');
-            });
-            
-            uploadArea.addEventListener('dragleave', () => {
-                uploadArea.classList.remove('dragover');
-            });
-            
-            uploadArea.addEventListener('drop', (e) => {
-                e.preventDefault();
-                uploadArea.classList.remove('dragover');
-                const files = e.dataTransfer.files;
-                if (files.length > 0) {
-                    fastaFile.files = files;
-                    showAlert(`File selected: ${files[0].name}`, 'info');
-                }
-            });
+            // Global variable to store current results for download
+            window.currentResults = null;
 
-            fastaFile.addEventListener('change', () => {
-                if (fastaFile.files.length > 0) {
-                    showAlert(`File selected: ${fastaFile.files[0].name}`, 'info');
-                }
-            });
-
-            // Form submission for prediction
-            uploadForm.addEventListener('submit', async function(e) {
-                e.preventDefault();
-                
-                errorSection.style.display = 'none'; // Hide previous errors
-                resultsSection.style.display = 'none'; // Hide previous results
-                predictionResultsContent.innerHTML = ''; // Clear previous results
-
-                if (fastaFile.files.length === 0) {
-                    displayError('Please select a FASTA file to upload.');
+            predictButton.addEventListener('click', async () => {
+                const file = fastaFile.files[0];
+                if (!file) {
+                    showAlert('Validation Error', 'Please select a FASTA file first.', 'warning');
                     return;
                 }
 
-                predictBtn.disabled = true;
-                predictProgress.style.display = 'block';
+                errorMessageSection.style.display = 'none'; // Hide any previous errors
+                predictionResultSection.style.display = 'none'; // Hide previous results
+                loader.style.display = 'block'; // Show loader
+                predictButton.disabled = true; // Disable button during prediction
+                window.currentResults = null; // Clear previous results for download
 
                 const formData = new FormData();
-                formData.append('file', fastaFile.files[0]);
+                formData.append('file', file);
 
                 try {
                     const response = await fetch('/predict', {
                         method: 'POST',
                         body: formData
                     });
-                    const result = await response.json(); // result is a dictionary: {seq_id: {antibiotic: prob, ...}}
 
                     if (response.ok) {
-                        displayResults(result);
-                        showAlert('Prediction successful!', 'success');
+                        const results = await response.json();
+                        displayResults(results, file.name); // Pass the filename to displayResults
+                        showAlert('Prediction Successful!', 'Resistance prediction completed.', 'info');
+                    } else if (response.status === 401) {
+                        // Redirect to login if unauthorized
+                        window.location.href = '/login';
                     } else {
-                        displayError(result.detail || 'Error during prediction.');
+                        const errorData = await response.json();
+                        displayError(errorData.detail || 'An unknown error occurred during prediction.');
+                        showAlert('Prediction Error', errorData.detail || 'An unknown error occurred during prediction.', 'danger');
                     }
                 } catch (error) {
                     console.error('Error:', error);
-                    displayError('An error occurred during prediction request.');
+                    displayError('Network error or server unreachable. Please try again.');
+                    showAlert('Network Error', 'Could not connect to the server. Please check your connection and try again.', 'danger');
                 } finally {
-                    predictBtn.disabled = false;
-                    predictProgress.style.display = 'none';
+                    loader.style.display = 'none'; // Hide loader
+                    predictButton.disabled = false; // Re-enable button
                 }
             });
 
-            // Function to display prediction results
-            function displayResults(results) { // 'results' is the dictionary from the backend
-                predictionResultsContent.innerHTML = ''; // Clear previous content
-                
-                // Check if results is an empty object
+            function displayResults(results, filename) {
+                predictionResultsDiv.innerHTML = ''; // Clear previous results
                 if (Object.keys(results).length === 0) {
-                    predictionResultsContent.innerHTML = '<p class="text-center text-muted">No prediction results found for the uploaded sequences.</p>';
-                    resultsSection.style.display = 'block';
-                    return;
-                }
-
-                // Iterate over each sequence ID in the results dictionary
-                for (const sequenceId in results) {
-                    if (Object.hasOwnProperty.call(results, sequenceId)) {
-                        const sequenceData = results[sequenceId]; // This is {antibiotic: prob, ...}
-
-                        const sequenceDiv = document.createElement('div');
-                        sequenceDiv.className = 'card mb-3'; // A card for each sequence
-                        sequenceDiv.innerHTML = `
-                            <div class="card-header result-section-title">Sequence: <span class="text-primary">${sequenceId}</span></div>
-                            <div class="card-body">
-                                <p class="text-muted">Resistance probabilities for this sequence:</p>
-                                <div class="row" id="antibioticProbabilities-${sequenceId}">
-                                    <!-- Antibiotic probability bars will go here -->
-                                </div>
-                                <div class="mt-3">
-                                    <strong>Predicted Resistances:</strong>
-                                    <div id="predictedBadges-${sequenceId}">
-                                        <!-- Predicted resistance badges will go here -->
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-                        predictionResultsContent.appendChild(sequenceDiv);
-
-                        const antibioticProbabilitiesDiv = document.getElementById(`antibioticProbabilities-${sequenceId}`);
-                        const predictedBadgesDiv = document.getElementById(`predictedBadges-${sequenceId}`);
-                        
-                        let hasResistances = false;
-
-                        // Iterate over each antibiotic and its probability for the current sequence
-                        for (const antibiotic in sequenceData) {
-                            if (Object.hasOwnProperty.call(sequenceData, antibiotic)) {
-                                const probability = sequenceData[antibiotic];
-                                const probability_percent = (probability * 100).toFixed(2);
-                                let barColor = 'intermediate-bar'; // Default
-                                let badgeClass = 'text-muted'; // Default for no strong prediction
-                                let resistanceText = 'Undetermined';
-
-                                if (probability >= 0.7) { // High probability of resistance
-                                    barColor = 'resistant-bar';
-                                    badgeClass = 'resistant';
-                                    resistanceText = 'Resistant';
-                                    hasResistances = true;
-                                } else if (probability <= 0.3) { // High probability of susceptibility
-                                    barColor = 'susceptible-bar';
-                                    badgeClass = 'susceptible';
-                                    resistanceText = 'Susceptible';
-                                }
-
-                                // Create probability bar
-                                const barContainer = document.createElement('div');
-                                barContainer.className = 'col-md-6 probability-bar-container';
-                                barContainer.innerHTML = `
-                                    <div class="d-flex justify-content-between align-items-center mb-1">
-                                        <span class="fw-bold">${antibiotic}</span>
-                                        <span class="badge bg-secondary">${probability_percent}%</span>
-                                    </div>
-                                    <div class="probability-bar">
-                                        <div class="probability-fill ${barColor}" style="width: ${probability_percent}%"></div>
-                                    </div>
-                                `;
-                                antibioticProbabilitiesDiv.appendChild(barContainer);
-
-                                // Create resistance badge only if resistant or susceptible
-                                if (resistanceText === 'Resistant' || resistanceText === 'Susceptible') {
-                                    const badge = document.createElement('span');
-                                    badge.className = `resistance-badge ${badgeClass}`;
-                                    badge.textContent = `${antibiotic} (${resistanceText})`;
-                                    predictedBadgesDiv.appendChild(badge);
-                                }
+                    predictionResultsDiv.innerHTML = '<p class="text-muted text-center">No resistance predictions found for the provided sequences.</p>';
+                } else {
+                    for (const sequenceId in results) {
+                        const resistanceProbs = results[sequenceId];
+                        let predictedResistancesHtml = '';
+                        let hasResistance = false;
+                        for (const drug in resistanceProbs) {
+                            if (resistanceProbs[drug] >= 0.5) { // Threshold for "resistance"
+                                predictedResistancesHtml += `<span class="badge bg-primary me-2">${drug} (${(resistanceProbs[drug] * 100).toFixed(2)}%)</span>`;
+                                hasResistance = true;
                             }
                         }
-
-                        if (!hasResistances && predictedBadgesDiv.children.length === 0) {
-                            const noResistanceSpan = document.createElement('span');
-                            noResistanceSpan.className = 'text-muted';
-                            noResistanceSpan.textContent = 'No significant resistances predicted.';
-                            predictedBadgesDiv.appendChild(noResistanceSpan);
+                        if (!hasResistance) {
+                            predictedResistancesHtml = '<span class="text-muted">No significant resistance predicted for this sequence.</span>';
                         }
+
+                        const resultItem = `
+                            <div class="result-item">
+                                <strong>Sequence ID:</strong> <span>${sequenceId}</span><br>
+                                <strong>Predicted Resistances:</strong> ${predictedResistancesHtml}
+                            </div>
+                        `;
+                        predictionResultsDiv.innerHTML += resultItem;
                     }
                 }
-                resultsSection.style.display = 'block';
-                
+                predictedFilenameSpan.textContent = filename; // Display the filename
+                predictionResultSection.style.display = 'block';
+
                 // Store results for download
-                // window.currentResults = result; // Keep raw dictionary for download
-                // To allow download results in previous structure:
                 window.currentResults = {
-                    filename: fastaFile.files[0].name, // Or retrieve from backend response if available
+                    filename: filename, // Store the filename directly
                     predictions: results // Store the actual prediction data
                 };
-
             }
 
             function displayError(message) {
-                document.getElementById('errorMessage').textContent = message;
-                errorSection.style.display = 'block';
+                errorMessageSection.textContent = message;
+                errorMessageSection.style.display = 'block';
             }
 
             // Download results functionality
