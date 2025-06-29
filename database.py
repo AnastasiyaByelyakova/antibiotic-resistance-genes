@@ -15,10 +15,10 @@ logger = logging.getLogger(__name__)
 
 # Database configuration from environment variables
 DB_CONFIG = {
-    "host": "localhost", #os.getenv("MYSQL_HOST"),
-    "user": "root",#os.getenv("MYSQL_USER"),
-    "password": "password",#os.getenv("MYSQL_PASSWORD"),
-    "database": "bdr_predictor_db",#os.getenv("MYSQL_DATABASE")
+    "host": os.getenv("MYSQL_HOST"),
+    "user": os.getenv("MYSQL_USER"),
+    "password": os.getenv("MYSQL_PASSWORD"),
+    "database": os.getenv("MYSQL_DATABASE")
 }
 
 def get_db_connection():
