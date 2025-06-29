@@ -169,6 +169,38 @@ The --reload flag is helpful during development as it automatically restarts the
 
 The application will now be accessible at http://localhost:8000.
 
+## Data Format for Model Training
+
+The model expects training data to be provided as a ZIP archive (.zip file). 
+
+### Folder-based Labeling
+
+In this approach, each folder within the ZIP file represents an antibiotic resistance class, and all FASTA files directly inside that folder are assumed to belong to that class. A single FASTA file can be present in multiple folders if the sequence exhibits resistance to multiple antibiotics.
+
+ZIP File Structure:
+
+your_training_data.zip
+├── ampicillin/
+│   ├── sequence1.fasta
+│   ├── sequence2.fasta
+│   └── ...
+├── ciprofloxacin/
+│   ├── sequence3.fasta
+│   ├── sequence1.fasta  # Same sequence can be in multiple folders
+│   └── ...
+├── tetracycline/
+│   ├── sequence4.fasta
+│   └── ...
+└── ...
+
+ampicillin/: A folder named after an antibiotic class (e.g., 'ampicillin').
+
+sequence1.fasta, sequence2.fasta: FASTA files containing bacterial genomic sequences. Each file can contain one or more sequences. The DataLoader will parse all sequences within these files.
+
+Multi-labeling: If a sequence (e.g., sequence1.fasta) is found in both the ampicillin/ and ciprofloxacin/ folders, it will be labeled as resistant to both 'ampicillin' and 'ciprofloxacin'.
+
+
+
 ## Usage
 
 ### Access the Application: 
