@@ -44,60 +44,6 @@ cd bacterial-resistance-predictor
 ### 2. Set up a Python Virtual Environment
 It's highly recommended to use a virtual environment to manage project dependencies:
 
-```bash
-git clone <repository_url>
-cd bacterial-resistance-predictor
-```
-
-
-Markdown
-
-# Bacterial Drug Resistance Predictor
-
-## Project Overview
-
-The **Bacterial Drug Resistance Predictor** is a machine learning pipeline built with FastAPI and TensorFlow/Keras designed to predict antibiotic resistance from bacterial genomic sequences (FASTA files). This application features **user authentication**, requiring users to log in before accessing the prediction and monitoring functionalities. It provides a web-based interface for users to upload genomic data, train/retrain models, validate model performance, and view real-time prediction results and model statistics.
-
-## Features
-
-* **User Authentication**: Secure login and registration system. All core functionalities (prediction, dashboard, training, validation) now require a logged-in user.
-
-* **Antibiotic Resistance Prediction:** Upload FASTA files containing bacterial genomic sequences to get predictions on resistance to various antibiotic classes.
-
-* **Model Training:** Train a new deep learning model from scratch using a provided dataset (ZIP archive containing FASTA files and a `metadata.json` for labels).
-
-* **Model Retraining:** Update an existing model with new data to improve its performance or adapt to new resistance patterns.
-
-* **Model Validation:** Evaluate the loaded model's performance on a separate validation dataset, providing metrics like accuracy, F1-score (macro), and Hamming loss.
-
-* **Interactive Dashboard:** A comprehensive dashboard to monitor model status, training statistics, recent predictions, frequent resistances, and real-time training progress (via chart).
-
-* **Model Summary:** View the detailed architecture summary of the loaded Keras model.
-
-* **Data Handling:** Utilizes `BioPython` for sequence parsing and `scikit-learn` for multi-label binarization of antibiotic classes.
-
-## Setup and Installation
-
-### Prerequisites
-
-* Python 3.8+
-
-* MySQL Database (must be running)
-
-* Git (optional, for cloning the repository)
-
-### 1. Clone the Repository (if applicable)
-
-If you have a Git repository, clone it and navigate into the project directory:
-
-```bash
-git clone <repository_url>
-cd bacterial-resistance-predictor
-```
-
-### 2. Set up a Python Virtual Environment
-It's highly recommended to use a virtual environment to manage project dependencies:
-
 
 ```bash
 python -m venv venv
@@ -179,6 +125,7 @@ In this approach, each folder within the ZIP file represents an antibiotic resis
 
 ZIP File Structure:
 
+```bash
 your_training_data.zip
 ├── ampicillin/
 │   ├── sequence1.fasta
@@ -192,6 +139,8 @@ your_training_data.zip
 │   ├── sequence4.fasta
 │   └── ...
 └── ...
+
+```
 
 ampicillin/: A folder named after an antibiotic class (e.g., 'ampicillin').
 
