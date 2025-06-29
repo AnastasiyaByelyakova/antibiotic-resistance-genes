@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Bacterial Drug Resistance Predictor</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+        }
+        .navbar {
+            background-color: #1a202c; /* Darker header */
+            border-bottom: 3px solid #667eea; /* Accent color */
+        }
+        .navbar-brand {
+            font-weight: bold;
+            color: #ffffff !important;
+        }
+        .navbar-nav .nav-link {
+            color: #cbd5e0 !important;
+            transition: color 0.3s;
+        }
+        .navbar-nav .nav-link:hover {
+            color: #ffffff !important;
+        }
+        .stat-card {
+            transition: transform 0.2s;
+        }
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        .metric-value {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+        .recent-prediction, .recent-validation {
+            border-left: 4px solid #007bff;
+            padding-left: 15px;
+            margin-bottom: 10px;
+        }
+        .resistance-mini-badge {
+            font-size: 0.7em;
+            margin: 1px;
+            padding: 2px 6px;
+            border-radius: 10px;
+            display: inline-block; /* Ensure badges are side-by-side */
+            background-color: #dc3545; /* Default for resistance */
+            color: white;
+        }
+        .upload-zone {
+            border: 2px dashed #28a745;
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            background-color: #f8f9fa;
+            transition: all 0.3s ease;
+        }
+        .upload-zone:hover {
+            background-color: #e9ecef;
+            border-color: #20c997;
+        }
+        .tab-content {
+            border: 1px solid #dee2e6;
+            border-top: none;
+            padding: 20px;
+            border-radius: 0 0 10px 10px;
+            min-height: 300px; /* Give some minimum height */
+        }
+        .nav-tabs {
+            border-radius: 10px 10px 0 0;
+            background-color: #f8f9fa; /* Light background for tabs */
+            border-bottom: none;
+        }
+        .nav-link {
+            color: #495057;
+            border: 1px solid transparent;
+            border-top-left-radius: 0.25rem;
+            border-top-right-radius: 0.25rem;
+            margin-bottom: -1px;
+        }
+        .nav-link.active {
+            color: #4299e1; /* Primary color for active tab */
+            background-color: #ffffff;
+            border-color: #dee2e6 #dee2e6 #ffffff;
+            font-weight: bold;
+        }
+        .badge-success-custom {
+            background-color: #28a745;
+            color: white;
+        }
+        .badge-info-custom {
+            background-color: #17a2b8;
+            color: white;
+        }
+        .alert-fixed {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1050;
+            min-width: 300px;
+        }
+        .progress-bar-animated {
+            animation: progress-bar-stripes 1s linear infinite;
+        }
+        @keyframes progress-bar-stripes {
+            from { background-position: 1rem 0; }
+            to { background-position: 0 0; }
+        }
+        .model-status-loaded {
+            color: #28a745; /* Green */
+        }
+        .model-status-not-loaded {
+            color: #dc3545; /* Red */
+        }
+        .model-status-loading {
+            color: #ffc107; /* Yellow */
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-dna"></i>
+                Bacterial Resistance Predictor
+            </a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="/">
+                    <i class="fas fa-upload"></i> Predict
+                </a>
+                <a class="nav-link active" href="/dashboard">
+                    <i class="fas fa-chart-line"></i> Dashboard
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <h2 class="mb-4 text-center">Prediction Dashboard</h2>
+
+        <!-- Global Alert for async operations -->
+        <div id="globalAlertContainer" class="alert-fixed" style="display: none;"></div>
+
+        <!-- Statistics Cards -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card stat-card h-100 shadow-sm">
+                    <div class="card-body text-center">
+                        <i class="fas fa-database fa-2x text-primary mb-2"></i>
+                        <h6 class="card-title">Training Samples</h6>
+                        <div class="metric-value text-primary">{{ metadata.get('train_samples', 'N/A') }}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card stat-card h-100 shadow-sm">
+                    <div class="card-body text-center">
+                        <i class="fas fa-vial fa-2x text-success mb-2"></i>
+                        <h6 class="card-title">Test Samples</h6>
+                        <div class="metric-value text-success">{{ metadata.get('test_samples', 'N/A') }}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card stat-card h-100 shadow-sm">
+                    <div class="card-body text-center">
+                        <i class="fas fa-percent fa-2x text-info mb-2"></i>
+                        <h6 class="card-title">Model Accuracy (Test)</h6>
+                        <div class="metric-value text-info">{{ '%.2f%%' % (metadata.get('test_accuracy', 0) * 100) if metadata.get('test_accuracy') != 'N/A' else 'N/A' }}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card stat-card h-100 shadow-sm">
+                    <div class="card-body text-center">
+                        <i class="fas fa-clock fa-2x text-warning mb-2"></i>
+                        <h6 class="card-title">Last Trained/Retrained</h6>
+                        <div class="metric-value text-warning" style="font-size: 1.2rem;">{{ metadata.get('last_trained', 'N/A') | default('N/A', true) }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <div class="card stat-card h-100 shadow-sm">
+                    <div class="card-body text-center">
+                        <i class="fas fa-calculator fa-2x text-secondary mb-2"></i>
+                        <h6 class="card-title">Total Predictions</h6>
+                        <div class="metric-value text-secondary">{{ metadata.get('total_predictions', 0) }}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card stat-card h-100 shadow-sm">
+                    <div class="card-body text-center">
+                        <i class="fas fa-file-alt fa-2x text-dark mb-2"></i>
+                        <h6 class="card-title">Unique Files Predicted</h6>
+                        <div class="metric-value text-dark">{{ metadata.get('unique_files_predicted', 0) }}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card stat-card h-100 shadow-sm">
+                    <div class="card-body text-center">
+                        <i class="fas fa-history fa-2x text-muted mb-2"></i>
+                        <h6 class="card-title">Last Prediction At</h6>
+                        <div class="metric-value text-muted" style="font-size: 1.2rem;">{{ metadata.get('last_prediction_time', 'N/A') | default('N/A', true) }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Tabs for Recent Predictions and Model Details -->
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="recent-predictions-tab" data-bs-toggle="tab" data-bs-target="#recent-predictions" type="button" role="tab" aria-controls="recent-predictions" aria-selected="true">
+                    <i class="fas fa-stream"></i> Recent Predictions
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="model-details-tab" data-bs-toggle="tab" data-bs-target="#model-details" type="button" role="tab" aria-controls="model-details" aria-selected="false">
+                    <i class="fas fa-info-circle"></i> Model Details
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="frequent-resistances-tab" data-bs-toggle="tab" data-bs-target="#frequent-resistances" type="button" role="tab" aria-controls="frequent-resistances" aria-selected="false">
+                    <i class="fas fa-chart-pie"></i> Frequent Resistances
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="recent-validations-tab" data-bs-toggle="tab" data-bs-target="#recent-validations" type="button" role="tab" aria-controls="recent-validations" aria-selected="false">
+                    <i class="fas fa-check-circle"></i> Recent Validations
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="training-history-tab" data-bs-toggle="tab" data-bs-target="#training-history" type="button" role="tab" aria-controls="training-history" aria-selected="false">
+                    <i class="fas fa-chart-line"></i> Training History
+                </button>
+            </li>
+        </ul>
+        <div class="tab-content" id="myTabContent">
+            <!-- Recent Predictions Tab -->
+            <div class="tab-pane fade show active" id="recent-predictions" role="tabpanel" aria-labelledby="recent-predictions-tab">
+                <h5 class="mb-3">Latest Predictions</h5>
+                {% if history %}
+                    <div class="list-group">
+                        {% for prediction in history | reverse %} {# Display latest predictions #}
+                            <div class="list-group-item list-group-item-action recent-prediction">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h6 class="mb-1">File: {{ prediction.filename }}</h6>
+                                    <small class="text-muted">{{ prediction.timestamp | default('N/A') }}</small>
+                                </div>
+                                <p class="mb-1">
+                                    <strong>Predicted Resistances ({{ prediction.total_resistances }}):</strong>
+                                    {% if prediction.predicted_resistances %}
+                                        {% for drug in prediction.predicted_resistances %}
+                                            <span class="resistance-mini-badge">{{ drug }}</span>
+                                        {% endfor %}
+                                    {% else %}
+                                        <span class="badge badge-success-custom">No resistance predicted</span>
+                                    {% endif %}
+                                </p>
+                                <small>Sequence ID: {{ prediction.sequence_id | default('N/A') }}</small>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-muted text-center">No predictions yet. Upload a FASTA file on the <a href="/">Predict</a> page.</p>
+                {% endif %}
+            </div>
+
+            <!-- Model Details Tab -->
+            <div class="tab-pane fade" id="model-details" role="tabpanel" aria-labelledby="model-details-tab">
+                <h5 class="mb-3">Current Model Information</h5>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item"><strong>Model Status:</strong>
+                        {% if metadata.get('model_loaded_status') %}
+                            <span class="model-status-loaded"><i class="fas fa-check-circle"></i> Loaded</span>
+                        {% else %}
+                            <span class="model-status-not-loaded"><i class="fas fa-times-circle"></i> Not Loaded (Train First!)</span>
+                        {% endif %}
+                    </li>
+                    <li class="list-group-item"><strong>Model Version:</strong> {{ metadata.get('model_version', 'N/A') }}</li>
+                    <li class="list-group-item"><strong>Keras Version:</strong> {{ metadata.get('keras_version', 'N/A') }}</li>
+                    <li class="list-group-item"><strong>TensorFlow Version:</strong> {{ metadata.get('tensorflow_version', 'N/A') }}</li>
+                    <li class="list-group-item"><strong>Last Updated:</strong> {{ metadata.get('last_trained', 'N/A') }}</li>
+                    <li class="list-group-item"><strong>Input Sequence Length:</strong> {{ metadata.get('input_sequence_length', 'N/A') }}</li>
+                    <li class="list-group-item"><strong>Number of Antibiotic Classes:</strong> {{ metadata.get('antibiotic_labels_count', 'N/A') }}</li>
+                    <li class="list-group-item"><strong>Total Parameters:</strong> {{ metadata.get('total_params', 'N/A') }}</li>
+                    <li class="list-group-item"><strong>Number of Layers:</strong> {{ metadata.get('layers_count', 'N/A') }}</li>
+                </ul>
+                <div class="mt-4">
+                    <h6>About the Model:</h6>
+                    <p class="text-muted">
+                        This model is a deep learning neural network, likely a Convolutional Neural Network (CNN) or a Recurrent Neural Network (RNN), trained to predict bacterial antibiotic resistance based on genome sequences. It analyzes specific genetic markers or broader sequence patterns associated with resistance mechanisms.
+                    </p>
+                </div>
+                <div class="mt-4">
+                    <h6>Model Architecture Summary:</h6>
+                    <pre id="modelSummary" class="bg-light p-3 rounded small" style="overflow-x: auto;">Loading model summary...</pre>
+                </div>
+            </div>
+
+            <!-- Frequent Resistances Tab -->
+            <div class="tab-pane fade" id="frequent-resistances" role="tabpanel" aria-labelledby="frequent-resistances-tab">
+                <h5 class="mb-3">Most Frequently Predicted Resistances</h5>
+                {% if metadata.get('frequent_resistances') %}
+                    <ul class="list-group">
+                        {% for antibiotic, count in metadata.get('frequent_resistances').items() %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                {{ antibiotic }}
+                                <span class="badge bg-primary rounded-pill">{{ count }}</span>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="text-muted text-center">No resistance data available yet from predictions.</p>
+                {% endif %}
+            </div>
+
+            <!-- Recent Validations Tab -->
+            <div class="tab-pane fade" id="recent-validations" role="tabpanel" aria-labelledby="recent-validations-tab">
+                <h5 class="mb-3">Latest Validation Runs</h5>
+                {% if validations %}
+                    <div class="list-group">
+                        {% for validation in validations | reverse %}
+                            <div class="list-group-item list-group-item-action recent-validation">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h6 class="mb-1">{{ validation.name }}</h6>
+                                    <small class="text-muted">{{ validation.timestamp | default('N/A') }}</small>
+                                </div>
+                                <p class="mb-1">File: {{ validation.filename }} ({{ validation.num_samples }} samples)</p>
+                                <p class="mb-1">
+                                    <strong>Metrics:</strong>
+                                    Accuracy: <span class="badge bg-info">{{ '%.2f%%' % (validation.metrics.accuracy * 100) if validation.metrics.accuracy is defined and validation.metrics.accuracy is not none else 'N/A' }}</span>
+                                    F1-Score (Macro): <span class="badge bg-primary">{{ '%.2f' % validation.metrics.f1_macro if validation.metrics.f1_macro is defined and validation.metrics.f1_macro is not none else 'N/A' }}</span>
+                                    Hamming Loss: <span class="badge bg-warning text-dark">{{ '%.4f' % validation.metrics.hamming_loss if validation.metrics.hamming_loss is defined and validation.metrics.hamming_loss is not none else 'N/A' }}</span>
+                                </p>
+                                <p class="mb-0">
+                                    <button class="btn btn-sm btn-outline-secondary mt-2" type="button" data-bs-toggle="collapse" data-bs-target="#report-{{ loop.index }}" aria-expanded="false" aria-controls="report-{{ loop.index }}">
+                                        View Classification Report
+                                    </button>
+                                </p>
+                                <div class="collapse mt-2" id="report-{{ loop.index }}">
+                                    <pre class="bg-light p-2 rounded small">{{ validation.report | default('No report available.') }}</pre>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-muted text-center">No validation runs yet. Run a validation below.</p>
+                {% endif %}
+            </div>
+
+            <!-- Training History Tab -->
+            <div class="tab-pane fade" id="training-history" role="tabpanel" aria-labelledby="training-history-tab">
+                <h5 class="mb-3">Real-time Training Progress</h5>
+                <div class="alert alert-info" role="alert" id="trainingChartMessage">
+                    Train a model to see the real-time training progress here.
+                </div>
+                <div class="chart-container" style="position: relative; height:400px; width:100%">
+                    <canvas id="trainingChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Model Management (Active) -->
+        <div class="row mt-4">
+            <div class="col-md-6 mb-4">
+                <div class="card shadow-sm h-100">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0"><i class="fas fa-rocket"></i> Initial Model Training</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted">
+                            Train the model for the first time. This typically requires a large, curated dataset.
+                        </p>
+                        <form id="trainModelForm" action="/train" method="POST" enctype="multipart/form-data">
+                            <div class="mb-3">
+                                <label for="trainFile" class="form-label">Upload Training Data (ZIP of FASTA + metadata.json)</label>
+                                <input class="form-control" type="file" id="trainFile" name="file" accept=".zip" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="trainEpochs" class="form-label">Epochs</label>
+                                <input type="number" class="form-control" id="trainEpochs" name="epochs" value="50" min="1" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="testSize" class="form-label">Test Size (0.0 - 1.0)</label>
+                                <input type="number" step="0.01" class="form-control" id="testSize" name="test_size" value="0.2" min="0" max="1" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary" id="trainBtn">
+                                <i class="fas fa-play"></i> Start Training
+                            </button>
+                        </form>
+                        <div id="trainProgress" class="progress mt-3" style="display: none;">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated bg-info" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">Training...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 mb-4">
+                <div class="card shadow-sm h-100">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0"><i class="fas fa-sync-alt"></i> Model Retraining</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted">
+                            Update the existing model with new data. This is faster than full training.
+                        </p>
+                        <form id="retrainModelForm" action="/retrain" method="POST" enctype="multipart/form-data">
+                            <div class="mb-3">
+                                <label for="retrainFile" class="form-label">Upload New Training Data (ZIP of FASTA + metadata.json)</label>
+                                <input class="form-control" type="file" id="retrainFile" name="file" accept=".zip" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="retrainEpochs" class="form-label">Epochs</label>
+                                <input type="number" class="form-control" id="retrainEpochs" name="epochs" value="10" min="1" required>
+                            </div>
+                            <button type="submit" class="btn btn-success" id="retrainBtn">
+                                <i class="fas fa-play"></i> Retrain Model
+                            </button>
+                        </form>
+                        <div id="retrainProgress" class="progress mt-3" style="display: none;">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">Retraining...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0"><i class="fas fa-chart-line"></i> Model Validation</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted">
+                            Evaluate the current model's performance on a new, labeled dataset.
+                        </p>
+                        <form id="validateModelForm" action="/validate" method="POST" enctype="multipart/form-data">
+                            <div class="mb-3">
+                                <label for="validateFile" class="form-label">Upload Validation Data (ZIP of FASTA + metadata.json)</label>
+                                <input class="form-control" type="file" id="validateFile" name="file" accept=".zip" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="validationName" class="form-label">Validation Run Name</label>
+                                <input type="text" class="form-control" id="validationName" name="validation_name" value="Manual Validation - {{ now | date('%Y%m%d%H%M') }}" required>
+                            </div>
+                            <button type="submit" class="btn btn-info" id="validateBtn">
+                                <i class="fas fa-check"></i> Run Validation
+                            </button>
+                        </form>
+                        <div id="validateProgress" class="progress mt-3" style="display: none;">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated bg-info" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">Validating...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <footer class="bg-light mt-5 py-4">
+        <div class="container text-center text-muted">
+            <p>&copy; 2024 Bacterial Drug Resistance Predictor. Powered by Keras and FastAPI.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Utility function to show alerts
+            function showAlert(message, type = 'success') {
+                const alertContainer = document.getElementById('globalAlertContainer');
+                alertContainer.innerHTML = `
+                    <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+                        ${message}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                `;
+                alertContainer.style.display = 'block';
+                setTimeout(() => {
+                    const alert = alertContainer.querySelector('.alert');
+                    if (alert) {
+                        new bootstrap.Alert(alert).close();
+                    }
+                }, 5000);
+            }
+
+            // Function to fetch and display model summary
+            async function fetchAndDisplayModelSummary() {
+                const modelSummaryElement = document.getElementById('modelSummary');
+                modelSummaryElement.textContent = 'Loading model summary...';
+                try {
+                    const response = await fetch('/model-summary');
+                    const data = await response.json();
+                    if (response.ok) {
+                        modelSummaryElement.textContent = data.summary;
+                    } else {
+                        modelSummaryElement.textContent = `Error: ${data.detail || 'Could not fetch model summary.'}`;
+                        showAlert(data.detail || 'Failed to load model summary.', 'danger');
+                    }
+                } catch (error) {
+                    console.error('Error fetching model summary:', error);
+                    modelSummaryElement.textContent = 'Error: Could not fetch model summary. Model might not be trained or server error.';
+                    showAlert('An error occurred while fetching model summary.', 'danger');
+                }
+            }
+
+            let trainingChart; // Declare chart variable globally or in a scope accessible to update
+
+            // Function to initialize or update the training chart
+            function updateTrainingChart(historyData) {
+                const ctx = document.getElementById('trainingChart').getContext('2d');
+                const trainingChartMessage = document.getElementById('trainingChartMessage');
+
+                if (historyData.epochs.length === 0) {
+                    trainingChartMessage.style.display = 'block';
+                    if (trainingChart) {
+                        trainingChart.destroy(); // Destroy previous chart if no data
+                        trainingChart = null;
+                    }
+                    return;
+                } else {
+                    trainingChartMessage.style.display = 'none';
+                }
+
+                const data = {
+                    labels: historyData.epochs,
+                    datasets: [
+                        {
+                            label: 'Training Accuracy',
+                            data: historyData.accuracy,
+                            borderColor: 'rgb(75, 192, 192)',
+                            tension: 0.1,
+                            fill: false
+                        },
+                        {
+                            label: 'Validation Accuracy',
+                            data: historyData.val_accuracy,
+                            borderColor: 'rgb(255, 99, 132)',
+                            tension: 0.1,
+                            fill: false
+                        },
+                        {
+                            label: 'Training Loss',
+                            data: historyData.loss,
+                            borderColor: 'rgb(54, 162, 235)',
+                            tension: 0.1,
+                            fill: false,
+                            hidden: true // Hidden by default
+                        },
+                        {
+                            label: 'Validation Loss',
+                            data: historyData.val_loss,
+                            borderColor: 'rgb(255, 159, 64)',
+                            tension: 0.1,
+                            fill: false,
+                            hidden: true // Hidden by default
+                        }
+                    ]
+                };
+
+                const options = {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed.y !== null) {
+                                        label += context.parsed.y.toFixed(4);
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                };
+
+                if (trainingChart) {
+                    trainingChart.data = data;
+                    trainingChart.update();
+                } else {
+                    trainingChart = new Chart(ctx, {
+                        type: 'line',
+                        data: data,
+                        options: options
+                    });
+                }
+            }
+
+            let trainingPollingInterval;
+
+            async function startTrainingPolling() {
+                // Clear any existing chart data and message
+                updateTrainingChart({epochs: [], loss: [], accuracy: [], val_loss: [], val_accuracy: []});
+                const trainingChartMessage = document.getElementById('trainingChartMessage');
+                trainingChartMessage.textContent = 'Training in progress... graph will update shortly.';
+                trainingChartMessage.style.display = 'block';
+
+                // Set interval to fetch training progress every 2 seconds
+                trainingPollingInterval = setInterval(async () => {
+                    try {
+                        const response = await fetch('/training-progress');
+                        const historyData = await response.json();
+                        if (response.ok && historyData.epochs && historyData.epochs.length > 0) {
+                            updateTrainingChart(historyData);
+                            trainingChartMessage.style.display = 'none'; // Hide message once data starts flowing
+                        } else if (!response.ok) {
+                            console.error('Error fetching training progress:', historyData.detail);
+                            trainingChartMessage.textContent = `Error fetching training progress: ${historyData.detail}`;
+                            clearInterval(trainingPollingInterval); // Stop polling on error
+                        }
+                        // Keep message if no data yet but no error
+                    } catch (error) {
+                        console.error('Network error during training progress fetch:', error);
+                        trainingChartMessage.textContent = 'Network error fetching training progress. Check server connection.';
+                        clearInterval(trainingPollingInterval); // Stop polling on network error
+                    }
+                }, 2000); // Poll every 2 seconds
+            }
+
+            function stopTrainingPolling() {
+                if (trainingPollingInterval) {
+                    clearInterval(trainingPollingInterval);
+                    trainingPollingInterval = null;
+                    console.log("Training polling stopped.");
+                }
+            }
+
+            // --- Initial Training Form Submission ---
+            document.getElementById('trainModelForm').addEventListener('submit', async function(event) {
+                event.preventDefault();
+                const form = event.target;
+                const formData = new FormData(form);
+                const trainBtn = document.getElementById('trainBtn');
+                const trainProgress = document.getElementById('trainProgress');
+
+                trainBtn.disabled = true;
+                trainProgress.style.display = 'block';
+
+                // Switch to Training History tab
+                const trainingHistoryTabBtn = document.getElementById('training-history-tab');
+                const tab = new bootstrap.Tab(trainingHistoryTabBtn);
+                tab.show();
+
+                startTrainingPolling(); // Start polling before sending train request
+
+                try {
+                    const response = await fetch('/train', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const result = await response.json();
+
+                    stopTrainingPolling(); // Stop polling when the training request completes
+
+                    if (response.ok) {
+                        showAlert(result.message, 'success');
+                        // Optionally refresh dashboard after a delay
+                        // setTimeout(() => location.reload(), 3000);
+                        // Instead of reloading, we can just let the chart display the final data
+                    } else {
+                        showAlert(result.detail || 'Error starting training.', 'danger');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    showAlert('An error occurred during training request.', 'danger');
+                } finally {
+                    trainBtn.disabled = false;
+                    trainProgress.style.display = 'none';
+                    // After training (success/fail), fetch the final history to ensure chart is up-to-date
+                    try {
+                        const finalResponse = await fetch('/training-progress');
+                        const finalHistoryData = await finalResponse.json();
+                        if (finalResponse.ok) {
+                            updateTrainingChart(finalHistoryData);
+                        }
+                    } catch (e) {
+                        console.error("Failed to fetch final training history:", e);
+                    }
+                }
+            });
+
+            // --- Retraining Form Submission ---
+            document.getElementById('retrainModelForm').addEventListener('submit', async function(event) {
+                event.preventDefault();
+                const form = event.target;
+                const formData = new FormData(form);
+                const retrainBtn = document.getElementById('retrainBtn');
+                const retrainProgress = document.getElementById('retrainProgress');
+
+                retrainBtn.disabled = true;
+                retrainProgress.style.display = 'block';
+
+                // NOTE: For retraining, we are not setting up real-time graphing like initial training
+                // If needed, similar polling logic would be required for the /retrain endpoint.
+
+                try {
+                    const response = await fetch('/retrain', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const result = await response.json();
+
+                    if (response.ok) {
+                        showAlert(result.message, 'success');
+                        setTimeout(() => location.reload(), 3000);
+                    } else {
+                        showAlert(result.detail || 'Error starting retraining.', 'danger');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    showAlert('An error occurred during retraining request.', 'danger');
+                } finally {
+                    retrainBtn.disabled = false;
+                    retrainProgress.style.display = 'none';
+                }
+            });
+
+            // --- Validation Form Submission ---
+            document.getElementById('validateModelForm').addEventListener('submit', async function(event) {
+                event.preventDefault();
+                const form = event.target;
+                const formData = new FormData(form);
+                const validateBtn = document.getElementById('validateBtn');
+                const validateProgress = document.getElementById('validateProgress');
+
+                validateBtn.disabled = true;
+                validateProgress.style.display = 'block';
+
+                try {
+                    const response = await fetch('/validate', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const result = await response.json();
+
+                    if (response.ok) {
+                        showAlert(result.message, 'success');
+                        setTimeout(() => location.reload(), 3000);
+                    } else {
+                        showAlert(result.detail || 'Error starting validation.', 'danger');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    showAlert('An error occurred during validation request.', 'danger');
+                } finally {
+                    validateBtn.disabled = false;
+                    validateProgress.style.display = 'none';
+                }
+            });
+            
+            // Set default validation name with current timestamp
+            const validationNameInput = document.getElementById('validationName');
+            if (validationNameInput) {
+                const now = new Date();
+                const year = now.getFullYear();
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                const day = String(now.getDate()).padStart(2, '0');
+                const hours = String(now.getHours()).padStart(2, '0');
+                const minutes = String(now.getMinutes()).padStart(2, '0');
+                validationNameInput.value = `Manual Validation - ${year}${month}${day}${hours}${minutes}`;
+            }
+
+            // Fetch model summary when the model details tab is shown
+            const modelDetailsTab = document.getElementById('model-details-tab');
+            modelDetailsTab.addEventListener('shown.bs.tab', fetchAndDisplayModelSummary);
+
+            // Also fetch on initial load if the tab is already active (e.g., page refresh on this tab)
+            if (modelDetailsTab.classList.contains('active')) {
+                fetchAndDisplayModelSummary();
+            }
+
+            // Initialize training chart on dashboard load if data exists (e.g., from previous run)
+            const trainingHistoryTab = document.getElementById('training-history-tab');
+            trainingHistoryTab.addEventListener('shown.bs.tab', async () => {
+                // Fetch initial data when tab is shown
+                try {
+                    const response = await fetch('/training-progress');
+                    const historyData = await response.json();
+                    if (response.ok) {
+                        updateTrainingChart(historyData);
+                    }
+                } catch (error) {
+                    console.error('Error fetching initial training history for tab:', error);
+                }
+            });
+
+            // If the training history tab is active on initial load, fetch the data
+            if (trainingHistoryTab.classList.contains('active')) {
+                // This will be handled by the 'shown.bs.tab' listener above if the tab system triggers it
+                // For direct initial load, if it's the default active tab:
+                // Consider adding a specific call here if the 'shown.bs.tab' event isn't reliable on initial page load
+                // Or simply rely on the form submission to trigger polling.
+            }
+        });
+    </script>
+</body>
+</html>

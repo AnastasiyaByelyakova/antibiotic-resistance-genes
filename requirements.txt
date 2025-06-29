@@ -1,0 +1,13 @@
+fastapi
+python-multipart
+jinja2
+tensorflow
+keras
+scikit-learn
+pandas
+biopython
+requests
+matplotlib
+seaborn
+joblib
+h5py

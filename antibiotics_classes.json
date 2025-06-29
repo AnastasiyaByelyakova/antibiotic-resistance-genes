@@ -1,0 +1,118 @@
+{
+    "beta-lactam": [
+        "ampicillin", "amoxicillin", "ceftriaxone", "methicillin", "penicillin",
+        "cephalexin", "cefazolin", "ceftazidime", "cefepime", "cefotaxime",
+        "cefuroxime", "ceftaroline", "cefixime", "cefpodoxime", "cefdinir",
+        "piperacillin", "ticarcillin", "oxacillin", "nafcillin", "cloxacillin",
+        "flucloxacillin", "benzylpenicillin", "phenoxymethylpenicillin",
+        "imipenem", "meropenem", "ertapenem", "doripenem", "aztreonam",
+        "clavulanic acid", "sulbactam", "tazobactam", "avibactam"
+    ],
+        "tetracycline": [
+        "tetracycline", "doxycycline", "minocycline", "tigecycline",
+        "demeclocycline", "oxytetracycline", "chlortetracycline"
+    ],
+        "chloramphenicol": [
+        "chloramphenicol", "thiamphenicol", "florfenicol"
+    ],
+        "aminoglycoside": [
+        "gentamicin", "streptomycin", "kanamycin", "amikacin", "tobramycin",
+        "neomycin", "paromomycin", "spectinomycin", "netilmicin", "sisomicin",
+        "dibekacin", "arbekacin", "isepamicin", "plazomicin"
+    ],
+        "fluoroquinolone": [
+        "ciprofloxacin", "levofloxacin", "moxifloxacin", "ofloxacin",
+        "norfloxacin", "enoxacin", "pefloxacin", "lomefloxacin", "sparfloxacin",
+        "gatifloxacin", "grepafloxacin", "trovafloxacin", "clinafloxacin",
+        "sitafloxacin", "prulifloxacin", "nadifloxacin", "besifloxacin",
+        "delafloxacin", "finafloxacin"
+    ],
+        "macrolide": [
+        "erythromycin", "azithromycin", "clarithromycin", "roxithromycin",
+        "spiramycin", "telithromycin", "fidaxomicin", "josamycin",
+        "midecamycin", "oleandomycin", "troleandomycin", "dirithromycin",
+        "flurithromycin", "solithromycin"
+    ],
+        "glycopeptide": [
+        "vancomycin", "teicoplanin", "telavancin", "dalbavancin", "oritavancin",
+        "ramoplanin", "bleomycin", "daptomycin"
+    ],
+        "folate pathway antagonist": [
+        "trimethoprim", "sulfamethoxazole", "sulfadiazine", "sulfisoxazole",
+        "sulfadoxine", "pyrimethamine", "dapsone", "sulfacetamide",
+        "sulfamethizole", "sulfanilamide", "sulfapyridine", "co-trimoxazole"
+    ],
+        "lincosamide": [
+        "clindamycin", "lincomycin", "pirlimycin"
+    ],
+        "rifamycin": [
+        "rifampin", "rifabutin", "rifapentine", "rifaximin", "rifamycin"
+    ],
+        "streptogramin": [
+        "quinupristin", "dalfopristin", "pristinamycin", "virginiamycin"
+    ],
+        "oxazolidinone": [
+        "linezolid", "tedizolid", "radezolid", "sutezolid"
+    ],
+        "nitroimidazole": [
+        "metronidazole", "tinidazole", "ornidazole", "secnidazole",
+        "benznidazole", "nimorazole"
+    ],
+        "nitrofuran": [
+        "nitrofurantoin", "furazolidone", "nitrofurazone", "nifuroxazide"
+    ],
+        "polymyxin": [
+        "polymyxin B", "colistin", "polymyxin E"
+    ],
+        "polypeptide": [
+        "bacitracin", "gramicidin", "tyrothricin", "polymyxin"
+    ],
+        "ansamycin": [
+        "rifampin", "rifabutin", "rifapentine", "geldanamycin", "herbimycin"
+    ],
+        "carbapenem": [
+        "imipenem", "meropenem", "ertapenem", "doripenem", "biapenem",
+        "panipenem", "faropenem", "tebipenem"
+    ],
+        "monobactam": [
+        "aztreonam", "tigemonam", "nocardicin", "tabtoxin"
+    ],
+        "penicillin": [
+        "penicillin", "ampicillin", "amoxicillin", "methicillin", "oxacillin",
+        "nafcillin", "cloxacillin", "flucloxacillin", "piperacillin",
+        "ticarcillin", "carbenicillin", "mezlocillin", "azlocillin"
+    ],
+        "cephalosporin": [
+        "cephalexin", "cefazolin", "ceftriaxone", "ceftazidime", "cefepime",
+        "cefotaxime", "cefuroxime", "ceftaroline", "cefixime", "cefpodoxime",
+        "cefdinir", "cefadroxil", "cefaclor", "cefoxitin", "cefotetan",
+        "cefmetazole", "ceftibuten", "cefditoren", "cefcapene"
+    ],
+        "lipopeptide": [
+        "daptomycin", "surfactin", "polymyxin", "colistin"
+    ],
+        "cyclic": [
+        "vancomycin", "teicoplanin", "gramicidin", "bacitracin", "polymyxin"
+    ],
+        "peptide": [
+        "bacitracin", "polymyxin", "colistin", "gramicidin", "tyrothricin",
+        "actinomycin", "bleomycin", "capreomycin"
+    ],
+        "quinolone": [
+        "nalidixic acid", "cinoxacin", "pipemidic acid", "oxolinic acid",
+        "ciprofloxacin", "levofloxacin", "moxifloxacin", "ofloxacin",
+        "norfloxacin", "enoxacin", "pefloxacin"
+    ],
+        "antitubercular": [
+        "isoniazid", "ethambutol", "pyrazinamide", "rifampin", "streptomycin",
+        "capreomycin", "cycloserine", "ethionamide", "para-aminosalicylic acid",
+        "bedaquiline", "delamanid", "pretomanid"
+    ],
+        "polyene antifungal": [
+        "amphotericin B", "nystatin", "natamycin", "filipin", "candicidin"
+    ],
+        "miscellaneous": [
+        "fosfomycin", "mupirocin", "fusidic acid", "novobiocin", "spectinomycin",
+        "chlorhexidine", "triclosan", "hexachlorophene", "benzalkonium chloride"
+    ]
+}
