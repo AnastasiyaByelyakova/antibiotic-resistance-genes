@@ -95,3 +95,10 @@ ALTER TABLE model_metadata
 ALTER TABLE model_metadata
 ADD COLUMN test_accuracy FLOAT;
 
+-- Table to store user credentials
+CREATE TABLE IF NOT EXISTS users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(255) UNIQUE NOT NULL,
+    hashed_password VARCHAR(255) NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
